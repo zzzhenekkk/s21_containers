@@ -11,6 +11,8 @@ public:
     // Добавление элемента в конец листа
     void push_back(T data);
     void show_list();
+    int get_size() {return Size;};
+    T& operator[](int index);
 
 private:
     class Node { // Убрано повторное объявление шаблона
@@ -56,6 +58,22 @@ void List<T>::show_list() {
         std::cout << current->data << std::endl;
         current = current->pNext;
     }
+}
+
+template <typename T>
+T& List<T>::operator[](int index) {
+    Node* current = head;
+    if (index >= Size) {
+        throw std::invalid_argument("Incorrect index"); 
+    } else {
+        while (current != nullptr && index > 0) { // Изменено условие для корректного вывода последнего элемента
+            current = current->pNext;
+            index--;
+        }
+
+    }
+    
+    return current->data;
 }
 
 
