@@ -41,6 +41,8 @@ public:
     void pop_back();
     void push_front(const value_type& data);
     void clear();
+    iterator insert(iterator pos, const_reference value); // inserts element into concrete pos and returns the iterator that points to the new element
+    void erase(iterator pos); //erases element at pos
     reference front() noexcept { return *begin(); }; //access the first element
     const_reference front() const noexcept { return *begin(); }
     // reference back() { return *std::prev(end()); }
@@ -169,6 +171,7 @@ public:
     // Операторы сравнения
     bool operator==(const ListConstIterator& other) const { return current == other.current; }
     bool operator!=(const ListConstIterator& other) const { return !(*this == other); }
+    // ListConstIterator operator=(ListConstIterator& other) {return ListConstIterator(other.current, other.pList); };
     // bool operator!=(const ListConstIterator& other) const { return current != other.current; }
 
 
@@ -256,6 +259,62 @@ list<T>::list(list &&l) {
 }
 
 // --------------------------------------- методы -------------------------------------
+
+
+template <typename T>
+void list<T>::erase(iterator pos) {
+    iterator it = this->begin();
+    iterator last = this->end();
+    --last;
+    if (it == pos)
+        pop_front();
+    else if (pos == last) 
+        pop_back();
+    else {
+        Node *current = head_;
+        Node *tmp;
+        --pos;
+        while (it != pos) {
+            current = current->pNext;
+            ++it;
+        }
+        tmp = current->pNext;
+        tmp->pNext->pPrev = current;
+        current->pNext = tmp->pNext;
+        delete tmp;
+        size_--;
+    }
+}
+
+template <typename T>
+typename list<T>::ListIterator list<T>::insert(ListIterator pos, const_reference value) {
+    Node* newNode = new Node(value);
+    Node* current = head_;
+    iterator it = this->begin();
+    // если вначале 
+    if (it == pos) {
+        push_front(value);
+        --it;
+    } // если в конце
+    else if (pos == this->end()) {
+        push_back(value);
+        --it;
+    } // если по середение
+    else {
+        --pos;
+        while (it != pos){
+            ++it;
+            current = current->pNext;
+        }
+        newNode->pNext = current->pNext;
+        current->pNext = newNode;
+        newNode->pPrev = current;
+        newNode->pNext->pPrev = newNode;
+        ++it;
+        size_++;
+    }
+    return it;
+}
 
 template <typename T>
 list<T>& list<T>::operator=(list &&l)  {
