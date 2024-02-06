@@ -330,8 +330,33 @@ typename list<T>::ListIterator list<T>::insert(ListIterator pos, const_reference
         newNode->pPrev = current;
         newNode->pNext->pPrev = newNode;
         ++it;
+        size_++;
     }
     return it;
+}
+
+template <typename T>
+void list<T>::erase(iterator pos) {
+    iterator it = this->begin();
+    iterator last(tail_);
+    if (it == pos)
+        pop_front();
+    else if (pos == last) 
+        pop_back();
+    else {
+        Node *current = head_;
+        Node *tmp;
+        --pos;
+        while (it != pos) {
+            current = current->pNext;
+            ++it;
+        }
+        tmp = current->pNext;
+        tmp->pNext->pPrev = current;
+        current->pNext = tmp->pNext;
+        delete tmp;
+        size_--;
+    }
 }
 
 // --------------------------------- определение операторов ------------------------------------

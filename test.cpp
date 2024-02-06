@@ -89,8 +89,9 @@ TEST(Insert, InsertStart) {
     
     // Проверяем, что первый элемент теперь равен 0
     EXPECT_EQ(list[0], 0);
-    // Проверяем, что итератор ссылается на втсавленный элемент
+    // Проверяем, что итератор ссылается на вставленный элемент
     EXPECT_EQ(*it2, 0);
+    EXPECT_EQ(list.size(), 4);
     list.show_list();
 }
 
@@ -102,10 +103,11 @@ TEST(Insert, InsertMiddle1) {
     // вставляем меду первым и вторым
     s21::list<int>::iterator it2 = list.insert(it, 5);
     
-    // Проверяем, что второй элемент теперь равен 0
+    // Проверяем, что второй элемент теперь равен 5
     EXPECT_EQ(list[1], 5);
-    // Проверяем, что итератор ссылается на втсавленный элемент
+    // Проверяем, что итератор ссылается на вставленный элемент
     EXPECT_EQ(*it2, 5);
+    EXPECT_EQ(list.size(), 4);
     list.show_list();
 }
 
@@ -118,10 +120,11 @@ TEST(Insert, InsertMiddle2) {
     // вставляем меду вторым и третьим (между предпоследним и последним)
     s21::list<int>::iterator it2 = list.insert(it, 7);
     
-    // Проверяем, что второй элемент теперь равен 0
+    // Проверяем, что третий элемент теперь равен 7
     EXPECT_EQ(list[2], 7);
-    // Проверяем, что итератор ссылается на втсавленный элемент
+    // Проверяем, что итератор ссылается на вставленный элемент
     EXPECT_EQ(*it2, 7);
+    EXPECT_EQ(list.size(), 4);
     list.show_list();
 }
 
@@ -129,17 +132,70 @@ TEST(Insert, InsertMiddle2) {
 TEST(Insert, InsertEnd) {
     s21::list<int> list = {1, 2, 3};
     s21::list<int>::iterator it = list.end();
-    
-    // ++it;
-    // ++it;
-    // ++it;
+
     // вставляем в конец
     s21::list<int>::iterator it2 = list.insert(it, 9);
     
-    // Проверяем, что второй элемент теперь равен 0
+    // Проверяем, что появившийся новый поселдний элемент теперь равен 9
     EXPECT_EQ(list[3], 9);
-    // Проверяем, что итератор ссылается на втсавленный элемент
+    // Проверяем, что итератор ссылается на вставленный элемент
     EXPECT_EQ(*it2, 9);
+    EXPECT_EQ(list.size(), 4);
+    list.show_list();
+}
+
+TEST(Iterator, PP) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+    ++it;
+    EXPECT_EQ(*it, 2);
+}
+
+TEST(Iterator, MM) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+    --it;
+    EXPECT_EQ(it, nullptr);
+}
+
+TEST(Erase, Start) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+
+    list.erase(it);
+    
+    // Проверяем, что первый элемент теперь равен 2
+    EXPECT_EQ(list[0], 2);
+
+    list.show_list();
+}
+
+TEST(Erase, Second) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+    ++it;
+
+    list.erase(it);
+    
+    // Проверяем, что первый элемент теперь равен 2
+    EXPECT_EQ(list[1], 3);
+
+    list.show_list();
+}
+
+TEST(Erase, Last) {
+    s21::list<int> list = {1, 2, 3, 4};
+    s21::list<int>::iterator it = list.begin();
+    ++it;
+    ++it;
+    ++it;
+
+    list.erase(it);
+    
+    // Проверяем, что первый элемент теперь равен 2
+    EXPECT_EQ(list[2], 3);
+    EXPECT_EQ(list.size(), 3);
+
     list.show_list();
 }
 
