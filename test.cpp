@@ -142,6 +142,46 @@ TEST(ListMoveAssignment, ReleasesResourcesBeforeMoveAssign) {
     // Это может включать проверку, что оригинальные указатели были удалены или изменены
 }
 
+TEST(ListIteratorDecrement, DecrementMiddle) {
+    s21::list<int> myList = {1, 2, 3, 4, 5};
+    auto it = myList.begin();
+    ++it; // Перемещаемся к 2
+    ++it; // Перемещаемся к 3
+
+    --it; // Декрементируем итератор, должны вернуться к 2
+    EXPECT_EQ(*it, 2);
+}
+
+// Тест на декремент итератора, указывающего на последний элемент
+TEST(ListIteratorDecrement, DecrementFromEnd) {
+    s21::list<int> myList = {1, 2, 3, 4, 5};
+    auto it = myList.end();
+    --it; // Декремент до последнего элемента (5)
+    EXPECT_EQ(*it, 5);
+
+    --it; // Декремент до предпоследнего элемента (4)
+    EXPECT_EQ(*it, 4);
+}
+
+// Тест на декремент итератора, указывающего на начало списка
+TEST(ListIteratorDecrement, DecrementFromBegin) {
+    std::list<int> myList = {1, 2, 3, 4, 5};
+    auto it = myList.begin();
+
+    s21::list<int> myList_s21 = {1, 2, 3, 4, 5};
+    auto it_s21 = myList_s21.begin();
+
+    // Попытка декремента итератора, указывающего на начало списка, может привести к неопределенному поведению
+    // Этот тест зависит от вашей реализации. Некоторые реализации могут выбросить исключение или предоставить специальное значение итератора
+    // EXPECT_ANY_THROW(--it); // Раскомментируйте, если ваша реализация выбрасывает исключение
+    // или
+    --it; // Раскомментируйте, если ваша реализация безопасно обрабатывает эту операцию
+    --it_s21;
+    // std::cout << *it;
+    // std::cout << *it_s21;
+    EXPECT_EQ(*it, *it_s21); // Проверьте, что итератор не изменился, если это поддерживается
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

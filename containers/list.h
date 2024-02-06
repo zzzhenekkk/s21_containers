@@ -78,17 +78,16 @@ template <typename T>
 class list<T>::ListIterator {
 private:
     Node * current; // Текущий узел, на который указывает итератор
-    Node * prev;
+    list<T>& pList;
 
 public:
-    ListIterator(Node * node) : current(node), prev(node->pPrev) {}
+    ListIterator(Node * node = nullptr, list<T>& pList = nullptr) : current(node), pList(pList) {}
 
     // Оператор разыменования
     T& operator*() { return current->data; }
 
     // Оператор инкремента для перехода к следующему элементу
     ListIterator& operator++() {
-        prev = current;
         current = current->pNext;
         return *this;
     }
@@ -100,17 +99,22 @@ public:
         return temp;
     }
 
-     // Оператор декримента для перехода к следующему элементу
+    // Оператор декримента для перехода к следующему элементу
     ListIterator& operator--() {
-        
-        if (current->pPrev) {
-            current = prev;
-            prev = current->pPrev;
-        } else {
-            throw std::out_of_range("Index out of range"); 
-        }
-            
+        if (current == pList.head_)
+            current = pList.tail_;
+        else if (current!=nullptr)
+            current = current->pPrev;
+        else 
+            current = pList.tail_;
         return *this;
+    }
+    
+    // Оператор декримента для перехода к следующему элементу
+    ListIterator& operator--(int) {
+        ListIterator temp = *this;
+        --(*this);
+        return temp;
     }
 
     // Операторы сравнения
@@ -122,18 +126,17 @@ public:
 template <typename T>
 class list<T>::ListConstIterator {
 private:
-    Node * current; // Текущий узел, на который указывает итератор
-    Node * prev;
+    const Node * current; // Текущий узел, на который указывает итератор
+    const list<T>& pList;
 
 public:
-    ListConstIterator(Node * node) : current(node), prev(node->pPrev) {}
+    ListConstIterator(const Node* node, const list<T>& pList) : current(node), pList(pList) {}
 
     // Оператор разыменования
     const T& operator*() const { return current->data; }
 
     // Оператор инкремента для перехода к следующему элементу
     ListConstIterator& operator++() {
-        prev = current;
         current = current->pNext;
         return *this;
     }
@@ -145,22 +148,29 @@ public:
         return temp;
     }
 
-     // Оператор декримента для перехода к следующему элементу
+        // Оператор декримента для перехода к следующему элементу
     ListConstIterator& operator--() {
-        
-        if (current->pPrev) {
-            current = prev;
-            prev = current->pPrev;
-        } else {
-            throw std::out_of_range("Index out of range"); 
-        }
-            
+        if (current == pList.head_)
+            current = pList.tail_;
+        else if (current!=nullptr)
+            current = current->pPrev;
+        else 
+            current = pList.tail_;
         return *this;
+    }
+    
+    // Оператор декримента для перехода к следующему элементу
+    ListConstIterator& operator--(int) {
+        ListConstIterator temp = *this;
+        --(*this);
+        return temp;
     }
 
     // Операторы сравнения
     bool operator==(const ListConstIterator& other) const { return current == other.current; }
-    bool operator!=(const ListConstIterator& other) const { return !(current == other.current); }
+    bool operator!=(const ListConstIterator& other) const { return !(*this == other); }
+    // bool operator!=(const ListConstIterator& other) const { return current != other.current; }
+
 
 };
 
@@ -179,24 +189,24 @@ public:
 
 template <typename T>
 typename list<T>::ListIterator list<T>::begin() {
-    return ListIterator(head_);
+    return ListIterator(head_, *this);
 }
 
 
 template <typename T>
 typename list<T>::ListIterator list<T>::end() {
-    return ListIterator(nullptr);
+    return ListIterator(nullptr, *this);
 }
 
 template <typename T>
 typename list<T>::ListConstIterator list<T>::begin() const{
-    return ListConstIterator(head_);
+    return ListConstIterator(head_, *this);
 }
 
 
 template <typename T>
 typename list<T>::ListConstIterator list<T>::end() const{
-    return ListConstIterator(nullptr);
+    return ListConstIterator(nullptr, *this);
 }
 
 
