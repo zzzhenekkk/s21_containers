@@ -23,10 +23,13 @@ public:
     list(size_type n);
     list(std::initializer_list<value_type> const &items); // инициализация с помощью списка инициализации
     list(const list &l); // copy constructor
+    list(list &&l); // move constructor
     ~list();
 
+    list& operator=(list &&l);
 
-    // методы для работы со списком
+
+    // -------------------  методы для работы со списком -------------------
     bool empty() {return !size_;} // checks whether the container is empty
     size_type size() {return size_;} // returns the number of elements
     size_type max_size() { return std::numeric_limits<size_type>::max();} // returns the maximum possible number of elements
@@ -40,8 +43,10 @@ public:
     void clear();
     iterator insert(iterator pos, const_reference value); // inserts element into concrete pos and returns the iterator that points to the new element
     void erase(iterator pos); //erases element at pos
-
-    // методы для работы с итератором
+    reference front() noexcept { return *begin(); }; //access the first element
+    const_reference front() const noexcept { return *begin(); }
+    // reference back() { return *std::prev(end()); }
+    // ------------------- методы для работы с итератором -------------------
     iterator begin();
     iterator end();
     ListConstIterator begin() const;
@@ -75,9 +80,10 @@ template <typename T>
 class list<T>::ListIterator {
 private:
     Node * current; // Текущий узел, на который указывает итератор
+    list<T>& pList;
 
 public:
-    ListIterator(Node * node) : current(node) {}
+    ListIterator(Node * node = nullptr, list<T>& pList = nullptr) : current(node), pList(pList) {}
 
     // Оператор разыменования
     T& operator*() { return current->data; }
@@ -95,14 +101,19 @@ public:
         return temp;
     }
 
-    // Оператор декремента для перехода к следующему элементу
+    // Оператор декримента для перехода к следующему элементу
     ListIterator& operator--() {
-        current = current->pPrev;
+        if (current == pList.head_)
+            current = pList.tail_;
+        else if (current!=nullptr)
+            current = current->pPrev;
+        else 
+            current = pList.tail_;
         return *this;
     }
-
-    // Оператор декремента (постфиксный)
-    ListIterator operator--(int) {
+    
+    // Оператор декримента для перехода к следующему элементу
+    ListIterator& operator--(int) {
         ListIterator temp = *this;
         --(*this);
         return temp;
@@ -117,10 +128,11 @@ public:
 template <typename T>
 class list<T>::ListConstIterator {
 private:
-    Node * current; // Текущий узел, на который указывает итератор
+    const Node * current; // Текущий узел, на который указывает итератор
+    const list<T>& pList;
 
 public:
-    ListConstIterator(Node * node) : current(node) {}
+    ListConstIterator(const Node* node, const list<T>& pList) : current(node), pList(pList) {}
 
     // Оператор разыменования
     const T& operator*() const { return current->data; }
@@ -138,10 +150,28 @@ public:
         return temp;
     }
 
+        // Оператор декримента для перехода к следующему элементу
+    ListConstIterator& operator--() {
+        if (current == pList.head_)
+            current = pList.tail_;
+        else if (current!=nullptr)
+            current = current->pPrev;
+        else 
+            current = pList.tail_;
+        return *this;
+    }
+    
+    // Оператор декримента для перехода к следующему элементу
+    ListConstIterator& operator--(int) {
+        ListConstIterator temp = *this;
+        --(*this);
+        return temp;
+    }
+
     // Операторы сравнения
     bool operator==(const ListConstIterator& other) const { return current == other.current; }
     bool operator!=(const ListConstIterator& other) const { return !(*this == other); }
-    ListConstIterator operator=(ListConstIterator& other) {return ListConstIterator(other.current); };
+    // ListConstIterator operator=(ListConstIterator& other) {return ListConstIterator(other.current, other.pList); };
     // bool operator!=(const ListConstIterator& other) const { return current != other.current; }
 
 
@@ -162,24 +192,24 @@ public:
 
 template <typename T>
 typename list<T>::ListIterator list<T>::begin() {
-    return ListIterator(head_);
+    return ListIterator(head_, *this);
 }
 
 
 template <typename T>
 typename list<T>::ListIterator list<T>::end() {
-    return ListIterator(nullptr);
+    return ListIterator(nullptr, *this);
 }
 
 template <typename T>
 typename list<T>::ListConstIterator list<T>::begin() const{
-    return ListConstIterator(head_);
+    return ListConstIterator(head_, *this);
 }
 
 
 template <typename T>
 typename list<T>::ListConstIterator list<T>::end() const{
-    return ListConstIterator(nullptr);
+    return ListConstIterator(nullptr, *this);
 }
 
 
@@ -218,10 +248,85 @@ list<T>::list(const list &l) {
     }
 }
 
+template <typename T>
+list<T>::list(list &&l) {
+    size_ = l.size_;
+    head_ = l.head_;
+    tail_ = l.tail_;
+    l.size_ = 0;
+    l.head_ = nullptr;
+    l.tail_ = nullptr;
+}
+
 // --------------------------------------- методы -------------------------------------
 
 
+template <typename T>
+void list<T>::erase(iterator pos) {
+    iterator it = this->begin();
+    iterator last = this->end();
+    --last;
+    if (it == pos)
+        pop_front();
+    else if (pos == last) 
+        pop_back();
+    else {
+        Node *current = head_;
+        Node *tmp;
+        --pos;
+        while (it != pos) {
+            current = current->pNext;
+            ++it;
+        }
+        tmp = current->pNext;
+        tmp->pNext->pPrev = current;
+        current->pNext = tmp->pNext;
+        delete tmp;
+        size_--;
+    }
+}
 
+template <typename T>
+typename list<T>::ListIterator list<T>::insert(ListIterator pos, const_reference value) {
+    Node* newNode = new Node(value);
+    Node* current = head_;
+    iterator it = this->begin();
+    // если вначале 
+    if (it == pos) {
+        push_front(value);
+        --it;
+    } // если в конце
+    else if (pos == this->end()) {
+        push_back(value);
+        --it;
+    } // если по середине
+    else {
+        --pos;
+        while (it != pos){
+            ++it;
+            current = current->pNext;
+        }
+        newNode->pNext = current->pNext;
+        current->pNext = newNode;
+        newNode->pPrev = current;
+        newNode->pNext->pPrev = newNode;
+        ++it;
+        size_++;
+    }
+    return it;
+}
+
+template <typename T>
+list<T>& list<T>::operator=(list &&l)  {
+    clear();
+    size_ = l.size_;
+    head_ = l.head_;
+    tail_ = l.tail_;
+    l.size_ = 0;
+    l.head_ = nullptr;
+    l.tail_ = nullptr;
+    return *this;
+}
 
 template <typename T>
 void list<T>::push_back(const value_type& data) {

@@ -84,7 +84,6 @@
         "iomanip": "cpp",
         "variant": "cpp",
         "cinttypes": "cpp",
-        "version": "cpp",
         "__functional_03": "cpp"
     }
 }
