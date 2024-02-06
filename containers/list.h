@@ -42,6 +42,8 @@ public:
     void push_front(const value_type& data);
     void clear();
     iterator insert(iterator pos, const_reference value); // inserts element into concrete pos and returns the iterator that points to the new element
+    template <typename... Args>
+    iterator insert_many(iterator pos, Args&&... args);
     void erase(iterator pos); //erases element at pos
     reference front() noexcept { return *begin(); }; //access the first element
     const_reference front() const noexcept { return *begin(); }
@@ -412,56 +414,12 @@ void list<T>::clear() {
 }
 
 template <typename T>
-typename list<T>::ListIterator list<T>::insert(ListIterator pos, const_reference value) {
-    Node* newNode = new Node(value);
-    Node* current = head_;
-    iterator it = this->begin();
-    if (it == pos) {
-        push_front(value);
-        it = this->begin();
-    }
-    else if (pos == this->end()) {
-        push_back(value);
-        it = ListIterator(tail_);
-    }
-    else {
-        --pos;
-        while (it != pos){
-            ++it;
-            current = current->pNext;
-        }
-        newNode->pNext = current->pNext;
-        current->pNext = newNode;
-        newNode->pPrev = current;
-        newNode->pNext->pPrev = newNode;
-        ++it;
-        size_++;
-    }
-    return it;
-}
-
-template <typename T>
-void list<T>::erase(iterator pos) {
-    iterator it = this->begin();
-    iterator last(tail_);
-    if (it == pos)
-        pop_front();
-    else if (pos == last) 
-        pop_back();
-    else {
-        Node *current = head_;
-        Node *tmp;
-        --pos;
-        while (it != pos) {
-            current = current->pNext;
-            ++it;
-        }
-        tmp = current->pNext;
-        tmp->pNext->pPrev = current;
-        current->pNext = tmp->pNext;
-        delete tmp;
-        size_--;
-    }
+template <typename... Args>
+typename list<T>::ListIterator list<T>::insert_many(iterator pos, Args&&... args) {
+  for (auto& arg : {args...}) {
+    insert(pos, arg);
+  }
+  return pos;
 }
 
 // --------------------------------- определение операторов ------------------------------------

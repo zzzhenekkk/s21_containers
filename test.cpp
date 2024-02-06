@@ -247,6 +247,24 @@ TEST(Insert, InsertEnd) {
     list.show_list();
 }
 
+TEST(List, Insert_Many) {
+  s21::list<int> our_list = {1, 2, 3, 4, 5};
+  s21::list<int>::iterator our_it = our_list.begin();
+  ++our_it;
+  our_list.insert_many(our_it, 7, 8, 9);
+  auto new_it = our_list.begin();
+  EXPECT_EQ(*new_it, 1);
+  ++new_it;
+  EXPECT_EQ(*new_it, 7);
+  ++new_it;
+  EXPECT_EQ(*new_it, 8);
+  ++new_it;
+  EXPECT_EQ(*new_it, 9);
+  ++new_it;
+  EXPECT_EQ(*new_it, 2);
+}
+
+
 TEST(Erase, Start) {
     s21::list<int> list = {1, 2, 3};
     s21::list<int>::iterator it = list.begin();
