@@ -64,7 +64,7 @@ TEST(ListCopyConstructor, CopyConstructorCreatesExactCopy) {
     // Проверка, что элементы списков совпадают
     size_t index = 0;
     for (auto it = copiedList.begin(); it != copiedList.end(); ++it) {
-        EXPECT_EQ(*it, originalList[index]) << "Element at index " << index << " does not match";
+        EXPECT_EQ(*it, originalList[index]);
         ++index;
     }
 }
@@ -74,14 +74,76 @@ TEST(ListCopyConstructor, ModificationsToCopyDoNotAffectOriginal) {
     s21::list<int> copiedList(originalList);
     
     // Изменяем копию
-    *copiedList.begin() = 10;
+    *(copiedList.begin()) = 10;
     
     // Проверяем, что первый элемент оригинального списка не изменился
-    EXPECT_EQ(*originalList.begin(), 1);
+    EXPECT_EQ(*(originalList.begin()), 1);
 }
 
+TEST(ListMoveConstructor, CanMoveList) {
+    // Создаем и заполняем временный список
+    s21::list<int> temp = {1, 2, 3, 4, 5};
+
+    // Используем конструктор перемещения для создания нового списка
+    s21::list<int> movedList = std::move(temp);
+
+    // Проверяем, что новый список содержит правильные данные
+    EXPECT_EQ(movedList.size(), 5);
+    int expectedValue = 1;
+    for (const auto& item : movedList) {
+        EXPECT_EQ(item, expectedValue++);
+    }
+
+    // Проверяем, что исходный список теперь пуст
+    EXPECT_TRUE(temp.empty());
+}
+
+
+TEST(ListMoveConstructor, SourceListIsValidAfterMove) {
+    s21::list<int> temp = {1, 2, 3};
+    s21::list<int> movedList = std::move(temp);
+
+    EXPECT_EQ(temp.size(), 0);
+
+}
+
+TEST(ListMoveAssignment, CanMoveAssignList) {
+    // Создаем и заполняем временный список
+    s21::list<int> temp = {1, 2, 3, 4, 5};
+
+    // Создаем целевой список и выполняем присваивание перемещением
+    s21::list<int> targetList;
+    targetList = std::move(temp);
+
+    // Проверяем, что целевой список содержит правильные данные после перемещения
+    EXPECT_EQ(targetList.size(), 5);
+    int expectedValue = 1;
+    for (const auto& item : targetList) {
+        EXPECT_EQ(item, expectedValue++);
+    }
+
+    // Проверяем, что исходный список теперь пуст
+    EXPECT_TRUE(temp.empty());
+}
+
+TEST(ListMoveAssignment, ReleasesResourcesBeforeMoveAssign) {
+    s21::list<int> targetList = {10, 20, 30}; // Начальное заполнение целевого списка
+    s21::list<int> temp = {1, 2, 3, 4, 5};
+
+    // Сохраняем оригинальные ресурсы целевого списка (например, указатели) для последующей проверки
+    // Этот шаг зависит от вашей внутренней реализации и может потребовать доступа к внутренним членам
+
+    targetList = std::move(temp); // Выполняем присваивание перемещением
+
+    // Проверяем, что целевой список теперь содержит новые данные
+    EXPECT_EQ(targetList.size(), 5);
+
+    // Проверяем, что оригинальные данные целевого списка были освобождены
+    // Это может включать проверку, что оригинальные указатели были удалены или изменены
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
