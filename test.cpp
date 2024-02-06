@@ -80,6 +80,68 @@ TEST(ListCopyConstructor, ModificationsToCopyDoNotAffectOriginal) {
     EXPECT_EQ(*originalList.begin(), 1);
 }
 
+TEST(Insert, InsertStart) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+    
+    // вставляем в начало
+    s21::list<int>::iterator it2 = list.insert(it, 0);
+    
+    // Проверяем, что первый элемент теперь равен 0
+    EXPECT_EQ(list[0], 0);
+    // Проверяем, что итератор ссылается на втсавленный элемент
+    EXPECT_EQ(*it2, 0);
+    list.show_list();
+}
+
+TEST(Insert, InsertMiddle1) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+    
+    ++it;
+    // вставляем меду первым и вторым
+    s21::list<int>::iterator it2 = list.insert(it, 5);
+    
+    // Проверяем, что второй элемент теперь равен 0
+    EXPECT_EQ(list[1], 5);
+    // Проверяем, что итератор ссылается на втсавленный элемент
+    EXPECT_EQ(*it2, 5);
+    list.show_list();
+}
+
+TEST(Insert, InsertMiddle2) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.begin();
+    
+    ++it;
+    ++it;
+    // вставляем меду вторым и третьим (между предпоследним и последним)
+    s21::list<int>::iterator it2 = list.insert(it, 7);
+    
+    // Проверяем, что второй элемент теперь равен 0
+    EXPECT_EQ(list[2], 7);
+    // Проверяем, что итератор ссылается на втсавленный элемент
+    EXPECT_EQ(*it2, 7);
+    list.show_list();
+}
+
+
+TEST(Insert, InsertEnd) {
+    s21::list<int> list = {1, 2, 3};
+    s21::list<int>::iterator it = list.end();
+    
+    // ++it;
+    // ++it;
+    // ++it;
+    // вставляем в конец
+    s21::list<int>::iterator it2 = list.insert(it, 9);
+    
+    // Проверяем, что второй элемент теперь равен 0
+    EXPECT_EQ(list[3], 9);
+    // Проверяем, что итератор ссылается на втсавленный элемент
+    EXPECT_EQ(*it2, 9);
+    list.show_list();
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

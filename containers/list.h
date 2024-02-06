@@ -38,6 +38,8 @@ public:
     void pop_back();
     void push_front(const value_type& data);
     void clear();
+    iterator insert(iterator pos, const_reference value); // inserts element into concrete pos and returns the iterator that points to the new element
+    void erase(iterator pos); //erases element at pos
 
     // методы для работы с итератором
     iterator begin();
@@ -93,9 +95,22 @@ public:
         return temp;
     }
 
+    // Оператор декремента для перехода к следующему элементу
+    ListIterator& operator--() {
+        current = current->pPrev;
+        return *this;
+    }
+
+    // Оператор декремента (постфиксный)
+    ListIterator operator--(int) {
+        ListIterator temp = *this;
+        --(*this);
+        return temp;
+    }
+
     // Операторы сравнения
     bool operator==(const ListIterator& other) const { return current == other.current; }
-    bool operator!=(const ListIterator& other) const { return !(*this == other); }
+    bool operator!=(const ListIterator& other) const { return !(current == other.current); }
 
 };
 
@@ -126,6 +141,7 @@ public:
     // Операторы сравнения
     bool operator==(const ListConstIterator& other) const { return current == other.current; }
     bool operator!=(const ListConstIterator& other) const { return !(*this == other); }
+    ListConstIterator operator=(ListConstIterator& other) {return ListConstIterator(other.current); };
     // bool operator!=(const ListConstIterator& other) const { return current != other.current; }
 
 
@@ -288,6 +304,34 @@ void list<T>::clear() {
     head_ = nullptr;
     tail_ = nullptr;
     size_ = 0;
+}
+
+template <typename T>
+typename list<T>::ListIterator list<T>::insert(ListIterator pos, const_reference value) {
+    Node* newNode = new Node(value);
+    Node* current = head_;
+    iterator it = this->begin();
+    if (it == pos) {
+        push_front(value);
+        it = this->begin();
+    }
+    else if (pos == this->end()) {
+        push_back(value);
+        it = ListIterator(tail_);
+    }
+    else {
+        --pos;
+        while (it != pos){
+            ++it;
+            current = current->pNext;
+        }
+        newNode->pNext = current->pNext;
+        current->pNext = newNode;
+        newNode->pPrev = current;
+        newNode->pNext->pPrev = newNode;
+        ++it;
+    }
+    return it;
 }
 
 // --------------------------------- определение операторов ------------------------------------
