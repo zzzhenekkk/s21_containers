@@ -83,6 +83,7 @@
         "any": "cpp",
         "iomanip": "cpp",
         "variant": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "__functional_03": "cpp"
     }
 }
