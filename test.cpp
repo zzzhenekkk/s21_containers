@@ -1,67 +1,85 @@
 #include <gtest/gtest.h>
 #include "containers/list.h"
+#include <iostream>
+#include <list>
 
-namespace s21 {
 
-TEST(ListTest, PushBackTest) {
-    List<int> list;
-    list.push_back(1);
-    list.push_back(2);
-    list.push_back(3);
-    EXPECT_EQ(list.get_size(), 3);
-    EXPECT_EQ(list[0], 1);
-    EXPECT_EQ(list[1], 2);
-    EXPECT_EQ(list[2], 3);
+TEST(list, Constructor_Default) {
+  s21::list<int> s21_list;
+  std::list<int> std_list;
+
+  EXPECT_EQ(s21_list.size(), std_list.size());
+  EXPECT_EQ(s21_list.empty(), std_list.empty());
 }
 
-TEST(ListTest, PushFrontTest) {
-    List<int> list;
-    list.push_front(1);
-    list.push_front(2);
-    list.push_front(3);
-    EXPECT_EQ(list.get_size(), 3);
-    EXPECT_EQ(list[0], 3);
-    EXPECT_EQ(list[1], 2);
-    EXPECT_EQ(list[2], 1);
+TEST(ListConstructor, ConstructWithSize) {
+    s21::list<int> intList(5);
+    EXPECT_EQ(intList.size(), 5);
+
+    for (size_t i = 0; i < intList.size(); ++i) {
+        EXPECT_EQ(intList[i], 0);
+    }
+
+    s21::list<std::string> stringList(3);
+    EXPECT_EQ(stringList.size(), 3);
+
+    for (size_t i = 0; i < stringList.size(); ++i) {
+        EXPECT_TRUE(stringList[i].empty());
+    }
 }
 
-TEST(ListTest, PopBackTest) {
-    List<int> list;
-    list.push_back(1);
-    list.push_back(2);
-    list.pop_back();
-    EXPECT_EQ(list.get_size(), 1);
-    EXPECT_EQ(list[0], 1);
+TEST(ListInitializerListConstructor, CanInitializeWithInitializerList) {
+    // Инициализация списка целыми числами
+    s21::list<int> intList = {1, 2, 3, 4, 5};
+
+    // Проверяем размер списка
+    EXPECT_EQ(intList.size(), 5);
+
+    // Проверяем значения элементов списка
+    size_t index = 0;
+    for (int value : {1, 2, 3, 4, 5}) {
+        EXPECT_EQ(intList[index], value);
+        ++index;
+    }
 }
 
-TEST(ListTest, PopFrontTest) {
-    List<int> list;
-    list.push_front(1);
-    list.push_front(2);
-    list.pop_front();
-    EXPECT_EQ(list.get_size(), 1);
-    EXPECT_EQ(list[0], 1);
+TEST(ListInitializerListConstructor, InitializeWithEmptyList) {
+    // Инициализация пустого списка
+    s21::list<int> emptyList = {};
+
+    // Проверяем, что размер списка равен 0
+    EXPECT_TRUE(emptyList.empty());
 }
 
-TEST(ListTest, ClearTest) {
-    List<int> list;
-    list.push_back(1);
-    list.push_back(2);
-    list.clear();
-    EXPECT_EQ(list.get_size(), 0);
+TEST(ListCopyConstructor, CopyConstructorCreatesExactCopy) {
+    // Создание и инициализация оригинального списка
+    s21::list<int> originalList = {1, 2, 3, 4, 5};
+    
+    // Создание копии с использованием конструктора копирования
+    s21::list<int> copiedList(originalList);
+    
+    // Проверка, что размеры списков совпадают
+    EXPECT_EQ(originalList.size(), copiedList.size());
+    
+    // Проверка, что элементы списков совпадают
+    size_t index = 0;
+    for (auto it = copiedList.begin(); it != copiedList.end(); ++it) {
+        EXPECT_EQ(*it, originalList[index]) << "Element at index " << index << " does not match";
+        ++index;
+    }
 }
 
-TEST(ListTest, AccessTest) {
-    List<int> list;
-    list.push_back(10);
-    list.push_back(20);
-    EXPECT_EQ(list[0], 10);
-    EXPECT_EQ(list[1], 20);
-    // Проверка на выброс исключения при доступе за пределы списка
-    EXPECT_THROW(list[2], std::out_of_range);
+TEST(ListCopyConstructor, ModificationsToCopyDoNotAffectOriginal) {
+    s21::list<int> originalList = {1, 2, 3};
+    s21::list<int> copiedList(originalList);
+    
+    // Изменяем копию
+    *copiedList.begin() = 10;
+    
+    // Проверяем, что первый элемент оригинального списка не изменился
+    EXPECT_EQ(*originalList.begin(), 1);
 }
 
-} // namespace s21
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
