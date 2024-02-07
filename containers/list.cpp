@@ -14,12 +14,17 @@ int main () {
 
     
     l.show_list();
+    list<int> l2;
+    l2.push_front(1);
     // std::cout << "\n" << l[0] << " Huynana";
     std::cout << "\n" << l.size() << "\n\n"; 
     // l.clear();
     // l.show_list();
-    l.pop_back();
+    // l.pop_back();
+    l2.show_list();
+    std::cout << "\n" << l2.size() << "\n\n"; 
+    l.swap(l2);
     l.show_list();
-    std::cout << "\n" << l.size() << "\n\n"; 
+    l2.show_list();
     return 0;
 }

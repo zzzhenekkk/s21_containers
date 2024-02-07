@@ -52,6 +52,7 @@ public:
     void reverse();
     void unique();
     void sort();
+    void merge(list& other);
 
     // ------------------- методы для работы с итератором -------------------
     iterator begin();
@@ -269,6 +270,7 @@ void list<T>::swap(list& other) {
     if (this != &other) {
       std::swap(head_, other.head_);
       std::swap(size_, other.size_);
+      std::swap(tail_, other.tail_);
     }
 }
 
