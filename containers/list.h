@@ -310,7 +310,7 @@ typename list<T>::ListIterator list<T>::insert(ListIterator pos, const_reference
     else if (pos == this->end()) {
         push_back(value);
         --it;
-    } // если по середение
+    } // если по середине
     else {
         --pos;
         while (it != pos){

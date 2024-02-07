@@ -3,7 +3,7 @@
 using namespace s21;
 int main () {
 
-    List<int> l;
+    list<int> l;
     l.push_back(5);
     l.push_back(777);
     l.push_back(2);
@@ -15,11 +15,11 @@ int main () {
     
     l.show_list();
     // std::cout << "\n" << l[0] << " Huynana";
-    std::cout << "\n" << l.get_size() << "\n\n"; 
+    std::cout << "\n" << l.size() << "\n\n"; 
     // l.clear();
     // l.show_list();
     l.pop_back();
     l.show_list();
-    std::cout << "\n" << l.get_size() << "\n\n"; 
+    std::cout << "\n" << l.size() << "\n\n"; 
     return 0;
 }
