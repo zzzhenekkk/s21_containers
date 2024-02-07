@@ -531,6 +531,24 @@ TEST(List, Merge) {
   EXPECT_EQ(our_list_second.empty(), std_list_second.empty());
 }
 
+TEST(List, Insert_Many) {
+  s21::list<int> our_list = {1, 2, 3, 4, 5};
+  s21::list<int>::iterator our_it = our_list.begin();
+  ++our_it;
+  our_list.insert_many(our_it, 7, 8, 9);
+  auto new_it = our_list.begin();
+  EXPECT_EQ(*new_it, 1);
+  ++new_it;
+  EXPECT_EQ(*new_it, 7);
+  ++new_it;
+  EXPECT_EQ(*new_it, 8);
+  ++new_it;
+  EXPECT_EQ(*new_it, 9);
+  ++new_it;
+  EXPECT_EQ(*new_it, 2);
+}
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
