@@ -519,6 +519,18 @@ TEST(ListSort, SortReverseOrder) {
     EXPECT_EQ(actual, expected);
 }
 
+TEST(List, Merge) {
+  s21::list<int> our_list_first = {1};
+  s21::list<int> our_list_second = {2, 3, 4, 5};
+  std::list<int> std_list_first = {1};
+  std::list<int> std_list_second = {2, 3, 4, 5};
+  our_list_first.merge(our_list_second);
+  std_list_first.merge(std_list_second);
+  EXPECT_EQ(our_list_first.front(), std_list_first.front());
+  EXPECT_EQ(our_list_first.back(), std_list_first.back());
+  EXPECT_EQ(our_list_second.empty(), std_list_second.empty());
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

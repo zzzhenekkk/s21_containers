@@ -53,6 +53,8 @@ public:
     void unique();
     void sort();
     void merge(list& other);
+    template <typename... Args>
+    iterator insert_many(iterator pos, Args&&... args);
 
     // ------------------- методы для работы с итератором -------------------
     iterator begin();
@@ -439,7 +441,7 @@ T& list<T>::operator[](size_type index) {
 
 
         
-
+// вставляет все элементы второго списка в указанную позицию первого листа, после этого второй лист зачищается
 template <typename T>
 void list<T>::splice(ListConstIterator pos, list& other) {
     if (this != &other && other.size_ != 0) {
@@ -476,6 +478,7 @@ void list<T>::splice(ListConstIterator pos, list& other) {
     }
 }
 
+// меняет голову с хвостом, а также next и prev у кажого узла
 template <typename T>
 void list<T>::reverse() {
     Node* current = head_;
@@ -498,6 +501,7 @@ void list<T>::reverse() {
     head_ = prev;
 }
 
+// удаляет последовательно идущие совпадающие элементы
 template <typename T>
 void list<T>::unique() {
     iterator begin_iterator = begin();
@@ -537,5 +541,21 @@ void list<T>::sort() {
     }
 }
 
+template <typename T>
+void list<T>::merge(list& other) {
+    iterator it = end();
+    // list<T> copy(other);
+    splice(it, other);
+    sort();    
+}
+
+template <typename T>
+template <typename... Args>
+typename list<T>::ListIterator list<T>::insert_many(iterator pos, Args&&... args) {
+  for (auto& arg : {args...}) {
+    insert(pos, arg);
+  }
+  return pos;
+}
 
 } // namespace s21
