@@ -29,13 +29,10 @@ TEST(ListConstructor, ConstructWithSize) {
 }
 
 TEST(ListInitializerListConstructor, CanInitializeWithInitializerList) {
-    // Инициализация списка целыми числами
     s21::list<int> intList = {1, 2, 3, 4, 5};
 
-    // Проверяем размер списка
     EXPECT_EQ(intList.size(), 5);
 
-    // Проверяем значения элементов списка
     size_t index = 0;
     for (int value : {1, 2, 3, 4, 5}) {
         EXPECT_EQ(intList[index], value);
@@ -44,24 +41,20 @@ TEST(ListInitializerListConstructor, CanInitializeWithInitializerList) {
 }
 
 TEST(ListInitializerListConstructor, InitializeWithEmptyList) {
-    // Инициализация пустого списка
     s21::list<int> emptyList = {};
 
-    // Проверяем, что размер списка равен 0
+
     EXPECT_TRUE(emptyList.empty());
 }
 
 TEST(ListCopyConstructor, CopyConstructorCreatesExactCopy) {
-    // Создание и инициализация оригинального списка
+
     s21::list<int> originalList = {1, 2, 3, 4, 5};
     
-    // Создание копии с использованием конструктора копирования
     s21::list<int> copiedList(originalList);
     
-    // Проверка, что размеры списков совпадают
     EXPECT_EQ(originalList.size(), copiedList.size());
     
-    // Проверка, что элементы списков совпадают
     size_t index = 0;
     for (auto it = copiedList.begin(); it != copiedList.end(); ++it) {
         EXPECT_EQ(*it, originalList[index]);
@@ -72,8 +65,7 @@ TEST(ListCopyConstructor, CopyConstructorCreatesExactCopy) {
 TEST(ListCopyConstructor, ModificationsToCopyDoNotAffectOriginal) {
     s21::list<int> originalList = {1, 2, 3};
     s21::list<int> copiedList(originalList);
-    
-    // Изменяем копию
+
     *(copiedList.begin()) = 10;
     
     // Проверяем, что первый элемент оригинального списка не изменился
@@ -108,38 +100,27 @@ TEST(ListMoveConstructor, SourceListIsValidAfterMove) {
 }
 
 TEST(ListMoveAssignment, CanMoveAssignList) {
-    // Создаем и заполняем временный список
     s21::list<int> temp = {1, 2, 3, 4, 5};
 
-    // Создаем целевой список и выполняем присваивание перемещением
     s21::list<int> targetList;
     targetList = std::move(temp);
 
-    // Проверяем, что целевой список содержит правильные данные после перемещения
     EXPECT_EQ(targetList.size(), 5);
     int expectedValue = 1;
     for (const auto& item : targetList) {
         EXPECT_EQ(item, expectedValue++);
     }
 
-    // Проверяем, что исходный список теперь пуст
     EXPECT_TRUE(temp.empty());
 }
 
 TEST(ListMoveAssignment, ReleasesResourcesBeforeMoveAssign) {
-    s21::list<int> targetList = {10, 20, 30}; // Начальное заполнение целевого списка
+    s21::list<int> targetList = {10, 20, 30};
     s21::list<int> temp = {1, 2, 3, 4, 5};
 
-    // Сохраняем оригинальные ресурсы целевого списка (например, указатели) для последующей проверки
-    // Этот шаг зависит от вашей внутренней реализации и может потребовать доступа к внутренним членам
+    targetList = std::move(temp);
 
-    targetList = std::move(temp); // Выполняем присваивание перемещением
-
-    // Проверяем, что целевой список теперь содержит новые данные
     EXPECT_EQ(targetList.size(), 5);
-
-    // Проверяем, что оригинальные данные целевого списка были освобождены
-    // Это может включать проверку, что оригинальные указатели были удалены или изменены
 }
 
 TEST(ListIteratorDecrement, DecrementMiddle) {
@@ -171,15 +152,10 @@ TEST(ListIteratorDecrement, DecrementFromBegin) {
     s21::list<int> myList_s21 = {1, 2, 3, 4, 5};
     auto it_s21 = myList_s21.begin();
 
-    // Попытка декремента итератора, указывающего на начало списка, может привести к неопределенному поведению
-    // Этот тест зависит от вашей реализации. Некоторые реализации могут выбросить исключение или предоставить специальное значение итератора
-    // EXPECT_ANY_THROW(--it); // Раскомментируйте, если ваша реализация выбрасывает исключение
-    // или
-    --it; // Раскомментируйте, если ваша реализация безопасно обрабатывает эту операцию
+    --it;
     --it_s21;
-    // std::cout << *it;
-    // std::cout << *it_s21;
-    EXPECT_EQ(*it, *it_s21); // Проверьте, что итератор не изменился, если это поддерживается
+
+    EXPECT_EQ(*it, *it_s21);
 }
 
 
@@ -244,7 +220,6 @@ TEST(Insert, InsertEnd) {
     // Проверяем, что итератор ссылается на вставленный элемент
     EXPECT_EQ(*it2, 9);
     EXPECT_EQ(list.size(), 4);
-    list.show_list();
 }
 
 TEST(Erase, Start) {
@@ -255,8 +230,6 @@ TEST(Erase, Start) {
     
     // Проверяем, что первый элемент теперь равен 2
     EXPECT_EQ(list[0], 2);
-
-    list.show_list();
 }
 
 TEST(Erase, Second) {
@@ -268,8 +241,6 @@ TEST(Erase, Second) {
     
     // Проверяем, что первый элемент теперь равен 2
     EXPECT_EQ(list[1], 3);
-
-    list.show_list();
 }
 
 TEST(Erase, Last) {
@@ -286,6 +257,266 @@ TEST(Erase, Last) {
     EXPECT_EQ(list.size(), 3);
 
     list.show_list();
+}
+
+// Тестирование доступа к первому элементу непустого списка
+TEST(ListFrontBack, AccessFirstElement) {
+    s21::list<int> myList{1, 2, 3, 4, 5};
+
+    const int expectedFirstElement = 1;
+    EXPECT_EQ(myList.front(), expectedFirstElement);
+}
+
+// Тестирование доступа к последнему элементу непустого списка
+TEST(ListFrontBack, AccessLastElement) {
+    s21::list<int> myList{1, 2, 3, 4, 5};
+
+    const int expectedLastElement = 5;
+    EXPECT_EQ(myList.back(), expectedLastElement);
+}
+
+
+// Тест проверяет, что swap корректно обменивает содержимое двух списков
+TEST(ListSwap, CorrectlySwapsContents) {
+    s21::list<int> list1 = {1, 2, 3};
+    s21::list<int> list2 = {4, 5, 6, 7};
+
+    // Запоминаем размеры списков до swap
+    auto size1_before = list1.size();
+    auto size2_before = list2.size();
+
+    list1.swap(list2);
+
+    // Проверяем, что размеры списков поменялись
+    EXPECT_EQ(list1.size(), size2_before);
+    EXPECT_EQ(list2.size(), size1_before);
+
+    // Проверяем, что содержимое списков поменялось
+    auto it = list1.begin();
+    EXPECT_EQ(*it++, 4);
+    EXPECT_EQ(*it++, 5);
+    EXPECT_EQ(*it++, 6);
+    EXPECT_EQ(*it, 7);
+
+    auto it2 = list2.begin();
+    EXPECT_EQ(*it2++, 1);
+    EXPECT_EQ(*it2++, 2);
+    EXPECT_EQ(*it2, 3);
+}
+
+// Тест проверяет, что swap корректно работает с пустыми списками
+TEST(ListSwap, WorksCorrectlyWithEmptyLists) {
+    s21::list<int> list1 = {1, 2, 3};
+    s21::list<int> emptyList;
+
+    list1.swap(emptyList);
+
+    // Проверяем, что list1 теперь пустой, а emptyList содержит элементы
+    EXPECT_TRUE(list1.empty());
+    EXPECT_FALSE(emptyList.empty());
+
+    // Проверяем содержимое теперь непустого списка
+    auto it = emptyList.begin();
+    EXPECT_EQ(*it++, 1);
+    EXPECT_EQ(*it++, 2);
+    EXPECT_EQ(*it, 3);
+}
+
+
+
+TEST(ListSpliceTest, MoveAllElements) {
+    s21::list<int> s21List1, s21List2;
+    std::list<int> stdList1, stdList2;
+
+    // Заполняем списки элементами
+    for (int i = 0; i < 5; ++i) {
+        s21List2.push_back(i);
+        stdList2.push_back(i);
+    }
+
+    // Выполняем splice
+    s21List1.splice(s21List1.end(), s21List2);
+    stdList1.splice(stdList1.end(), stdList2);
+
+    // Проверяем размеры списков после splice
+    EXPECT_EQ(s21List1.size(), stdList1.size());
+    EXPECT_EQ(s21List2.size(), stdList2.size());
+
+    // Проверяем, что элементы корректно переместились
+    auto s21It = s21List1.begin();
+    auto stdIt = stdList1.begin();
+    for (; s21It != s21List1.end() && stdIt != stdList1.end(); ++s21It, ++stdIt) {
+        EXPECT_EQ(*s21It, *stdIt);
+    }
+}
+
+
+
+// Тест на перемещение элементов в начало списка
+TEST(ListSplice, MoveElementsToFront) {
+    s21::list<int> list1 = {4, 5, 6};
+    s21::list<int> list2 = {1, 2, 3};
+
+    list1.splice(list1.begin(), list2);
+
+    EXPECT_EQ(list1.size(), 6); // Проверяем размер результирующего списка
+    EXPECT_TRUE(list2.empty()); // Второй список должен быть пустым после операции
+
+    // Проверяем порядок элементов
+    auto it = list1.begin();
+    EXPECT_EQ(*it++, 1);
+    EXPECT_EQ(*it++, 2);
+    EXPECT_EQ(*it++, 3);
+    EXPECT_EQ(*it++, 4);
+    EXPECT_EQ(*it++, 5);
+    EXPECT_EQ(*it, 6);
+}
+
+
+TEST(ListSplice, MoveBetweenEmptyLists) {
+    s21::list<int> list1;
+    s21::list<int> list2;
+
+    list1.splice(list1.begin(), list2);
+
+    EXPECT_TRUE(list1.empty());
+    EXPECT_TRUE(list2.empty());
+}
+
+
+TEST(ListSplice, SpliceItself) {
+    s21::list<int> list = {1, 2, 3};
+    list.splice(list.begin(), list);
+
+    EXPECT_EQ(list.size(), 3);
+    auto it = list.begin();
+    EXPECT_EQ(*it++, 1);
+    EXPECT_EQ(*it++, 2);
+    EXPECT_EQ(*it, 3);
+}
+
+TEST(ListReverse, HandleEmptyList) {
+    s21::list<int> emptyList;
+    emptyList.reverse();
+    EXPECT_EQ(emptyList.size(), 0);
+}
+
+
+TEST(ListReverse, HandleSingleElementList) {
+    s21::list<int> singleElementList = {1};
+    singleElementList.reverse();
+    EXPECT_EQ(singleElementList.front(), 1);
+    EXPECT_EQ(singleElementList.back(), 1);
+}
+
+
+TEST(ListReverse, HandleMultipleElementsList) {
+    s21::list<int> multipleElementsList = {1, 2, 3, 4, 5};
+    multipleElementsList.reverse();
+
+    std::vector<int> expectedReversedElements = {5, 4, 3, 2, 1};
+    std::vector<int> actualReversedElements;
+    for (auto it = multipleElementsList.begin(); it != multipleElementsList.end(); ++it) {
+        actualReversedElements.push_back(*it);
+    }
+
+    EXPECT_EQ(actualReversedElements, expectedReversedElements);
+}
+
+// Тест на проверку сохранения размера списка после reverse
+TEST(ListReverse, PreserveSizeAfterReverse) {
+    s21::list<int> list = {1, 2, 3, 4, 5};
+    size_t originalSize = list.size();
+    list.reverse();
+    EXPECT_EQ(list.size(), originalSize);
+}
+
+TEST(ListUnique, RemovesConsecutiveDuplicates) {
+    s21::list<int> testList = {1, 2, 2, 3, 3, 3, 4, 5, 5};
+    testList.unique();
+    int expected[] = {1, 2, 3, 4, 5};
+    int i = 0;
+    for (auto it = testList.begin(); it != testList.end(); ++it, ++i) {
+        EXPECT_EQ(*it, expected[i]);
+    }
+    EXPECT_EQ(i, 5);
+}
+
+TEST(ListUnique, WorksOnEmptyList) {
+    s21::list<int> emptyList;
+    emptyList.unique();
+    EXPECT_TRUE(emptyList.empty());
+}
+
+TEST(ListUnique, WorksOnSingleElementList) {
+    s21::list<int> singleElementList = {42};
+    singleElementList.unique();
+    EXPECT_EQ(singleElementList.size(), 1);
+    EXPECT_EQ(*(singleElementList.begin()), 42);
+}
+
+TEST(ListUnique, NoDuplicates) {
+    s21::list<int> noDuplicateList = {1, 2, 3, 4, 5};
+    noDuplicateList.unique();
+    int expected[] = {1, 2, 3, 4, 5};
+    int i = 0;
+    for (auto it = noDuplicateList.begin(); it != noDuplicateList.end(); ++it, ++i) {
+        EXPECT_EQ(*it, expected[i]);
+    }
+    EXPECT_EQ(i, 5);
+}
+
+TEST(ListSort, SortEmptyList) {
+    s21::list<int> list;
+    list.sort();
+    EXPECT_TRUE(list.empty());
+}
+
+// Тест на сортировку списка из одного элемента
+TEST(ListSort, SortSingleElementList) {
+    s21::list<int> list = {1};
+    list.sort();
+    EXPECT_EQ(list.front(), 1);
+    EXPECT_EQ(list.back(), 1);
+}
+
+// Тест на сортировку списка из нескольких элементов
+TEST(ListSort, SortMultipleElementsList) {
+    s21::list<int> list = {3, 1, 4, 1, 5, 9, 2, 6};
+    list.sort();
+    
+    std::vector<int> expected = {1, 1, 2, 3, 4, 5, 6, 9};
+    std::vector<int> actual;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        actual.push_back(*it);
+    }
+    EXPECT_EQ(actual, expected);
+}
+
+// Тест на сортировку уже отсортированного списка
+TEST(ListSort, SortAlreadySorted) {
+    s21::list<int> list = {1, 2, 3, 4, 5};
+    list.sort();
+    
+    std::vector<int> expected = {1, 2, 3, 4, 5};
+    std::vector<int> actual;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        actual.push_back(*it);
+    }
+    EXPECT_EQ(actual, expected);
+}
+
+// Тест на сортировку списка с обратным порядком элементов
+TEST(ListSort, SortReverseOrder) {
+    s21::list<int> list = {5, 4, 3, 2, 1};
+    list.sort();
+    
+    std::vector<int> expected = {1, 2, 3, 4, 5};
+    std::vector<int> actual;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        actual.push_back(*it);
+    }
+    EXPECT_EQ(actual, expected);
 }
 
 int main(int argc, char **argv) {
