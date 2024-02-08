@@ -531,7 +531,47 @@ TEST(List, Merge) {
   EXPECT_EQ(our_list_second.empty(), std_list_second.empty());
 }
 
-TEST(List, Insert_Many) {
+TEST(List, Merge2) {
+  s21::list<int> our_list_first = {10, 6, 128};
+  s21::list<int> our_list_second = {256};
+  std::list<int> std_list_first = {10, 6, 128};
+  std::list<int> std_list_second = {256};
+  our_list_first.merge(our_list_second);
+  std_list_first.merge(std_list_second);
+  EXPECT_EQ(our_list_first.front(), std_list_first.front());
+  EXPECT_EQ(our_list_first.back(), std_list_first.back());
+  EXPECT_EQ(our_list_second.empty(), std_list_second.empty());
+}
+
+TEST(List, Merge3) {
+  s21::list<int> our_list_first = {10, 6, 64};
+  s21::list<int> our_list_second = {256, 128};
+  std::list<int> std_list_first = {10, 6, 64};
+  std::list<int> std_list_second = {256, 128};
+  our_list_first.merge(our_list_second);
+  std_list_first.merge(std_list_second);
+  EXPECT_EQ(our_list_first.front(), std_list_first.front());
+  EXPECT_EQ(our_list_first.back(), std_list_first.back());
+  EXPECT_EQ(our_list_second.empty(), std_list_second.empty());
+}
+
+TEST(List, Insert_Many_first) {
+  s21::list<int> our_list = {1, 2, 3, 4, 5};
+  s21::list<int>::iterator our_it = our_list.begin();
+  our_list.insert_many(our_it, 7, 8, 9);
+  auto new_it = our_list.begin();
+  EXPECT_EQ(*new_it, 7);
+  ++new_it;
+  EXPECT_EQ(*new_it, 8);
+  ++new_it;
+  EXPECT_EQ(*new_it, 9);
+  ++new_it;
+  EXPECT_EQ(*new_it, 1);
+  ++new_it;
+  EXPECT_EQ(*new_it, 2);
+}
+
+TEST(List, Insert_Many_second) {
   s21::list<int> our_list = {1, 2, 3, 4, 5};
   s21::list<int>::iterator our_it = our_list.begin();
   ++our_it;
@@ -546,6 +586,46 @@ TEST(List, Insert_Many) {
   EXPECT_EQ(*new_it, 9);
   ++new_it;
   EXPECT_EQ(*new_it, 2);
+}
+
+
+TEST(List, Insert_Many_back) {
+  s21::list<int> our_list = {1, 2, 3, 4, 5};
+  our_list.insert_many_back(7, 8);
+  auto new_it = our_list.end();
+  --new_it;
+  --new_it;
+  --new_it;
+  EXPECT_EQ(*new_it, 5);
+  ++new_it;
+  EXPECT_EQ(*new_it, 7);
+  ++new_it;
+  EXPECT_EQ(*new_it, 8);
+  ++new_it;
+}
+
+TEST(List, Insert_Many_front) {
+  s21::list<int> our_list = {1, 2, 3};
+  our_list.insert_many_front(7, 8);
+  auto new_it = our_list.begin();
+  EXPECT_EQ(*new_it, 7);
+  ++new_it;
+  EXPECT_EQ(*new_it, 8);
+  ++new_it;
+  EXPECT_EQ(*new_it, 1);
+  ++new_it;
+}
+
+TEST(List, Insert_Many_empty) {
+  s21::list<int> our_list;
+  s21::list<int>::iterator our_it = our_list.begin();
+  our_list.insert_many(our_it, 7, 8, 9);
+  auto new_it = our_list.begin();
+  EXPECT_EQ(*new_it, 7);
+  ++new_it;
+  EXPECT_EQ(*new_it, 8);
+  ++new_it;
+  EXPECT_EQ(*new_it, 9);
 }
 
 

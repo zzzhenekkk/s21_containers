@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <limits>
+#include <typeinfo>
 
 namespace s21 {
 
@@ -55,6 +56,10 @@ public:
     void merge(list& other);
     template <typename... Args>
     iterator insert_many(iterator pos, Args&&... args);
+    template <typename... Args>
+    void insert_many_back(Args&&... args);
+    template <typename... Args>
+    void insert_many_front(Args&&... args);
 
     // ------------------- методы для работы с итератором -------------------
     iterator begin();
@@ -544,9 +549,8 @@ void list<T>::sort() {
 template <typename T>
 void list<T>::merge(list& other) {
     iterator it = end();
-    // list<T> copy(other);
     splice(it, other);
-    sort();    
+    // sort();    
 }
 
 template <typename T>
@@ -557,5 +561,21 @@ typename list<T>::ListIterator list<T>::insert_many(iterator pos, Args&&... args
   }
   return pos;
 }
+
+template <typename T>
+template <typename... Args>
+void list<T>::insert_many_back(Args&&... args){
+    iterator it = end();
+    (insert(it, std::forward<Args>(args)), ...);
+}
+
+template <typename T>
+template <typename... Args>
+void list<T>::insert_many_front(Args&&... args){
+    iterator it = begin();
+    (insert(it, std::forward<Args>(args)), ...);
+}
+
+
 
 } // namespace s21
